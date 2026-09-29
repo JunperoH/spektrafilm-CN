@@ -1,0 +1,31 @@
+# Spectral-upsampling LUT descriptor (sidecar for the co-located .npy).
+# Read by the runtime spectral-LUT registry to drive ONE generic consume path:
+# identifier -> load spectra -> (reflectance: relight x E_ref, integrate, midgray-
+# normalize) -> apply_lut_cubic_2d(tc) * b. One descriptor per LUT in this folder.
+#
+# LOCAL ADDITION (not shipped upstream yet): arctic2026beta02, from
+# https://discuss.pixls.us/t/57512/59 (arctic, 2026-06-14). Baked spectra taken
+# verbatim from the release zip (reflectance_xy_tc.npy); values here transcribed
+# from its manifest.toml. Remove this file + the .npy to uninstall.
+
+identifier = "arctic2026beta02"
+file = "arctic2026beta02_reflectance_xy_tc.npy"
+kind = "reflectance"
+title = "arctic 2026 beta02 - prior-constrained memory-color reflectance (skin/vegetation realism)"
+
+[array]
+lut_size = 192                                # array is (lut_size, lut_size, bands) over the tc chromaticity grid
+bands = 81
+spectral_shape = [380, 780, 5]                # start, end, interval (nm)
+dtype = "float16"
+observer = "CIE 1931 2 Degree Standard Observer"
+
+[reflectance]                                 # present iff kind = "reflectance"
+scene_illuminant = "D65"                      # recovery + chromaticity projection white (per manifest)
+midgray = 0.184                               # self-normalization neutral
+bounded = false                               # super-unity by design (peaks ~4-8); do not clip
+
+[meta]
+method = "Quadratic-program smoothest-metamer fit per tc cell: XYZ error + reflectance-prior error + UV/IR energy penalties + van Trigt slope smoothness, priors from otsu/skin NIST+ISSA/forest/ECOSTRESS/USGS (~25k spectra). 32-dim PCA forward model also shipped in the release zip."
+source = "arctic (Andrea Volpato), pixls.us thread 57512 posts 50-59; release zip manifest version beta02, created 2026-06-14"
+notes = "Trades a little colorimetric (XYZ) accuracy for spectral realism of memory colors (skin W-dips, vegetation red-edge). D65-recovered, designed for D55-relit daylight film; tungsten not reoptimized per author. beta02 reduces skin spill vs beta01. recon_rmse_in_locus mean 0.0021 / p99 0.0078 / max 0.0150."

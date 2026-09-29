@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+build/
+dist/
+*.spec.tmp
+*.log
+*.zip
+*.7z
+*.exe
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
