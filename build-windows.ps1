@@ -10,7 +10,7 @@ $python = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'
 & $python -m pip install -r requirements-build.txt
 if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
 
-& $python -m pip install --no-deps -e .
+& $python -m pip install --no-build-isolation --no-deps -e .
 if ($LASTEXITCODE -ne 0) { throw 'Local package installation failed.' }
 
 & $python -m PyInstaller --noconfirm --clean Spektrafilm.spec
